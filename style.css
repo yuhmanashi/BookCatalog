@@ -44,12 +44,9 @@ h1 {
     border: 1px solid blue;
 
     display: flex;
+    flex-direction: column;
     justify-content: flex-start;
     border-spacing: 0;
-}
-
-tbody {
-    width: 100%;
 }
 
 tr {
