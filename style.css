@@ -5,7 +5,7 @@ h1 {
 #main {
     height: 80%;
     width: 1000px;
-    border: 1px solid black;
+    border: 2px solid black;
     
     position: absolute;
     top: 50%;
