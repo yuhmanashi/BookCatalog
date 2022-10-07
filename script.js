@@ -9,9 +9,11 @@ const tbody = document.getElementById('tbody');
 submit.addEventListener('click', (e) => {
     e.preventDefault();
     const words = search.value;
-    const query = createQuery(words);
-    getData(query);
-    setSorted();
+    if (words){
+        const query = createQuery(words);
+        getData(query);
+        setSorted();
+    }
 })
 
 // search
@@ -41,7 +43,7 @@ const dataToBooks = (data, num) => {
     for (let i = 0; i < num; i++){
         const current = data.docs[i];
         const title = current.title;
-        const authors = current.author_name.join(',');
+        const authors = current.author_name.join(', ');
         const pubYear = current.first_publish_year;
         const numPages = current.number_of_pages_median;
         currentBooks.push([title, authors, pubYear, numPages])
@@ -75,17 +77,12 @@ const clearBody = () => {
 
 // sort
 const sorted = {};
-const setSorted = () => {
-    for (let i = 0; i < 4; i++){
-        sorted[i] = false;
-    }
-}
 
 const sorts = document.getElementsByClassName('sort');
 for (let sort of sorts){
     sort.addEventListener('click', (e) => {
         e.preventDefault();
-        const value = e.currentTarget.getAttribute('value')
+        const value = e.currentTarget.getAttribute('value');
         
         if (currentBooks.length > 0){
             if (value <= 1){
@@ -108,6 +105,28 @@ for (let sort of sorts){
     
             createEntries();
         }
+
+        createArrow(sort, value);
     })
+}
+
+const setSorted = () => {
+    for (let i = 0; i < 4; i++){
+        sorted[i] = false;
+    }
+
+    for (let sort of sorts){
+        sort.innerText = '↑'
+    }
+}
+
+setSorted();
+
+const createArrow = (sort, value) => {
+    if (sorted[value]){
+        sort.innerText = '↓'
+    } else {
+        sort.innerText = '↑'
+    }
 }
 
