@@ -10,10 +10,11 @@ submit.addEventListener('click', (e) => {
     e.preventDefault();
     const words = search.value;
     const query = createQuery(words);
-    // clearTable();
     getData(query);
+    setSorted();
 })
 
+// search
 const createQuery = (words) => {
     const query = words.split(' ');
     let result = query[0];
@@ -40,13 +41,14 @@ const dataToBooks = (data, num) => {
     for (let i = 0; i < num; i++){
         const current = data.docs[i];
         const title = current.title;
-        const authors = current.author_name;
+        const authors = current.author_name.join(',');
         const pubYear = current.first_publish_year;
         const numPages = current.number_of_pages_median;
         currentBooks.push([title, authors, pubYear, numPages])
     }
 }
 
+// create table entries
 function createEntries(){
     clearBody();
     const tbody = document.createElement('tbody')
@@ -57,7 +59,6 @@ function createEntries(){
 }
 
 const createEntry = (tbody, entry) => {
-    entry[1] = entry[1].join(',');
     const tr = document.createElement('tr');
     for (let arg of entry){
         const td = document.createElement('td')
@@ -68,6 +69,45 @@ const createEntry = (tbody, entry) => {
 }
 
 const clearBody = () => {
-    table.removeChild(table.getElementsByTagName("tbody")[0]);
+    const tbody = table.getElementsByTagName("tbody")[0];
+    if (tbody) table.removeChild(table.getElementsByTagName("tbody")[0]);
+}
+
+// sort
+const sorted = {};
+const setSorted = () => {
+    for (let i = 0; i < 4; i++){
+        sorted[i] = false;
+    }
+}
+
+const sorts = document.getElementsByClassName('sort');
+for (let sort of sorts){
+    sort.addEventListener('click', (e) => {
+        e.preventDefault();
+        const value = e.currentTarget.getAttribute('value')
+        
+        if (currentBooks.length > 0){
+            if (value <= 1){
+                if (!sorted[value]){
+                    currentBooks.sort((a, b) => a[value].localeCompare(b[value]));
+                    sorted[value] = true;
+                } else {
+                    currentBooks.sort((a, b) => b[value].localeCompare(a[value]));
+                    sorted[value] = false;
+                }
+            } else {
+                if (!sorted[value]){
+                    currentBooks.sort((a, b) => a[value] - b[value]);
+                    sorted[value] = true;
+                } else {
+                    currentBooks.sort((a, b) => b[value] - a[value]);
+                    sorted[value] = false;
+                }
+            }
+    
+            createEntries();
+        }
+    })
 }
 
